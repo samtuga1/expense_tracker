@@ -4,51 +4,54 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTx;
   // ignore: use_key_in_widget_constructors
-  const TransactionList({this.transactions});
+  const TransactionList({this.transactions, this.deleteTx});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500.0,
+      height: 500,
       child: ListView.builder(
         itemBuilder: (ctx, index) {
-          return Card(
-              child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.purple, width: 2),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+            child: Card(
+              elevation: 5,
+              child: ListTile(
+                trailing: IconButton(
+                  color: Theme.of(context).errorColor,
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    deleteTx(transactions[index].id);
+                  },
                 ),
-                child: Text(
-                  '\$ ${transactions[index].amount}',
-                  // tx.amount.toString(),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.purple,
+                  radius: 30,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: FittedBox(
+                      child: Text(
+                        '\$ ${transactions[index].amount.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  transactions[index].title,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple,
-                      fontSize: 17),
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                subtitle: Text(
+                  DateFormat.yMMMd().format(transactions[index].date),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transactions[index].title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Text(
-                    DateFormat.yMMMd().format(transactions[index].date),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.grey),
-                  ),
-                ],
-              )
-            ],
-          ));
+            ),
+          );
         },
         itemCount: transactions.length,
       ),
