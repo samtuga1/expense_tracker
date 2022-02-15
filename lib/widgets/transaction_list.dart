@@ -17,13 +17,21 @@ class TransactionList extends StatelessWidget {
           child: Card(
             elevation: 5,
             child: ListTile(
-              trailing: IconButton(
-                color: Theme.of(context).errorColor,
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  deleteTx(transactions[index].id);
-                },
-              ),
+              trailing: MediaQuery.of(context).size.width > 450
+                  ? FlatButton.icon(
+                      textColor: Colors.red,
+                      onPressed: () {
+                        deleteTx(transactions[index].id);
+                      },
+                      icon: const Icon(Icons.delete),
+                      label: const Text('Delete'))
+                  : IconButton(
+                      color: Theme.of(context).errorColor,
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        deleteTx(transactions[index].id);
+                      },
+                    ),
               leading: CircleAvatar(
                 backgroundColor: Colors.purple,
                 radius: 30,
