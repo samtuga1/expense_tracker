@@ -10,19 +10,18 @@ class ChartBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 110,
-      child: Column(
+    return LayoutBuilder(builder: (ctx, constraints) {
+      return Column(
         children: [
           SizedBox(
-              height: 20,
+              height: constraints.maxHeight * 0.15,
               child: FittedBox(
                   child: Text('\$${spendingAmount.toStringAsFixed(0)}'))),
-          const SizedBox(
-            height: 4,
+          SizedBox(
+            height: constraints.maxHeight * 0.05,
           ),
           SizedBox(
-            height: 60,
+            height: constraints.maxHeight * 0.6,
             width: 10,
             child: Stack(
               children: [
@@ -45,12 +44,16 @@ class ChartBar extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(
-            height: 4,
+          SizedBox(
+            height: constraints.maxHeight * 0.05,
           ),
-          Text(label),
+          SizedBox(
+              height: constraints.maxHeight * 0.15,
+              child: FittedBox(
+                child: Text(label),
+              )),
         ],
-      ),
-    );
+      );
+    });
   }
 }

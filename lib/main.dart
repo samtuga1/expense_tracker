@@ -4,14 +4,19 @@ import 'package:demo/widgets/new_transaction.dart';
 import 'package:demo/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/models/transaction.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MaterialApp(
+void main() {
+  runApp(
+    MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
             .copyWith(secondary: Colors.amber),
       ),
       home: HomeScreen(),
-    ));
+    ),
+  );
+}
 
 // ignore: use_key_in_widget_constructors
 class HomeScreen extends StatefulWidget {
@@ -59,46 +64,70 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      actions: [
+        IconButton(
+          onPressed: () {
+            _startAddNewTransaction(context);
+          },
+          icon: const Icon(Icons.add),
+        )
+      ],
+      title: const Text('Expense Tracker'),
+      centerTitle: true,
+    );
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              _startAddNewTransaction(context);
-            },
-            icon: const Icon(Icons.add),
-          )
-        ],
-        title: const Text('Expense Tracker'),
-        centerTitle: true,
-      ),
-      body: _userTransactions.isEmpty
-          ? Column(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Chart(
-                  recentTransactions: _recentTransaction,
-                ),
-                const Center(
-                  child: Text('No Transactions to show'),
-                )
+                const Text('Show Chart'),
+                Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    })
               ],
-            )
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Chart(
-                    recentTransactions: _recentTransaction,
-                  ),
-                  TransactionList(
-                    transactions: _userTransactions,
-                    deleteTx: _deleteTransaction,
-                  )
-                ],
-              ),
             ),
+            _showChart
+                ? SizedBox(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        (isLandscape == true ? 0.7 : 0.3),
+                    child: Chart(
+                      recentTransactions: _recentTransaction,
+                    ),
+                  )
+                : SizedBox(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child: _userTransactions.isEmpty
+                        ? const Center(
+                            child: Text('No Transactions to show'),
+                          )
+                        : TransactionList(
+                            transactions: _userTransactions,
+                            deleteTx: _deleteTransaction,
+                          ),
+                  )
+          ],
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
