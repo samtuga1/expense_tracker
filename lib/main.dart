@@ -1,4 +1,5 @@
 // @dart=2.9
+import 'dart:io';
 import 'package:demo/widgets/chart.dart';
 import 'package:demo/widgets/new_transaction.dart';
 import 'package:demo/widgets/transaction_list.dart';
@@ -144,12 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _startAddNewTransaction(context);
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              onPressed: () {
+                _startAddNewTransaction(context);
+              },
+              child: const Icon(Icons.add),
+            ),
     );
   }
 }
