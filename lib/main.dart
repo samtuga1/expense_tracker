@@ -106,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Show Chart'),
-                  Switch(
+                  Switch.adaptive(
+                    activeColor: Colors.amber,
                     value: _showChart,
                     onChanged: (val) {
                       setState(() {
