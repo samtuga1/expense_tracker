@@ -82,49 +82,64 @@ class _HomeScreenState extends State<HomeScreen> {
       title: const Text('Expense Tracker'),
       centerTitle: true,
     );
+    final txList = SizedBox(
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.7,
+      child: _userTransactions.isEmpty
+          ? const Center(
+              child: Text('No Transactions to show'),
+            )
+          : TransactionList(
+              transactions: _userTransactions,
+              deleteTx: _deleteTransaction,
+            ),
+    );
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Show Chart'),
-                Switch(
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Show Chart'),
+                  Switch(
                     value: _showChart,
                     onChanged: (val) {
                       setState(() {
                         _showChart = val;
                       });
-                    })
-              ],
-            ),
-            _showChart
-                ? SizedBox(
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        (isLandscape == true ? 0.7 : 0.3),
-                    child: Chart(
-                      recentTransactions: _recentTransaction,
-                    ),
-                  )
-                : SizedBox(
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.7,
-                    child: _userTransactions.isEmpty
-                        ? const Center(
-                            child: Text('No Transactions to show'),
-                          )
-                        : TransactionList(
-                            transactions: _userTransactions,
-                            deleteTx: _deleteTransaction,
-                          ),
-                  )
+                    },
+                  ),
+                ],
+              ),
+            if (!isLandscape)
+              SizedBox(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: Chart(
+                  recentTransactions: _recentTransaction,
+                ),
+              ),
+            if (!isLandscape) txList,
+            if (isLandscape)
+              _showChart
+                  ? SizedBox(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.7,
+                      child: Chart(
+                        recentTransactions: _recentTransaction,
+                      ),
+                    )
+                  : txList
           ],
         ),
       ),
